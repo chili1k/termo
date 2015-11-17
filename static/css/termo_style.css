@@ -1,0 +1,158 @@
+body {
+background-color: black;
+font-family:Arial,Serif;
+font-size:15px;
+font-weight: normal;
+color: black;
+margin: 0;
+padding:10px;
+}
+
+a {
+text-decoration: none;
+color: #6E0D25;
+}
+
+#sideBar {
+float:left;
+width: 160px;
+margin: 0 10px 0 0;
+}
+
+#sideBar select {
+width:100%;
+font-size: 1.3em;
+}
+
+#mainContent {
+float:left;
+background-color: #F1EBE4;
+padding: 20px 130px 50px 20px;
+}
+
+#mainContent fieldset {
+border: 1px solid black;
+padding: 10px;
+background-color: white;
+}
+
+.timeInput, .dateInput {
+margin-right:5px;
+}
+
+.timeInput {
+width:50px;
+}
+
+.dateInput {
+width:80px;
+}
+
+.nav {
+list-style-type:none;
+padding: 0;
+margin: 40px 0 0 0;
+clear:left;
+}
+
+.nav li {
+display:block;
+margin: 10px 0 0 0;
+text-align: left;
+}
+
+.nav li a {
+background-color: #625AD5;
+margin: 0;
+color: black;
+display:block;
+width:95%;
+padding: 5px 0 5px 5px;
+}
+
+.nav li a:hover {
+color: black;
+background-color: #bbb;
+}
+
+#mainContent #sensorData {
+/*padding: 10px 20px 50px 20px;*/
+/*border: 1px solid white;*/
+}
+
+#mainContent form {
+float:left;
+}
+
+
+#mainContent #sensorGraph {
+display:block;
+clear:both;
+margin-top: 80px;
+}
+
+#mainContent #sensorGraph .graphTitle {
+font-weight:bold;
+font-size:0.9em;
+}
+
+#mainContent #sensorGraph .graphSubtitle {
+font-size:0.7em;
+}
+
+fieldset {
+border:none;
+padding:0;
+margin:0 0 10px 0;
+padding-top:10px;
+width: 430px;
+}
+
+label {
+display:block;
+float:left;
+clear:left;
+width:150px;
+}
+
+input,textarea,select {
+float:left;
+}
+
+.button {
+border: 1px solid #aaa;
+box-shadow:inset 0px 1px 0px 0px #ffffff;
+background-color: #ccc;
+background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #ededed), color-stop(1, #dfdfdf) );
+background:-moz-linear-gradient( center top, #ededed 5%, #dfdfdf 100% );
+filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ededed', endColorstr='#dfdfdf');
+color: #444;
+padding: 4px 12px 4px 12px;
+font-size: 0.9em;
+border-radius: 6px;
+}
+
+#mainContent #temperatures {
+float:left;
+border: 1px solid #ccc;
+width: 250px;
+height: 100px;
+padding: 10px 0 10px 40px;
+background-image:url('/static/img/thermo.png');
+background-repeat:no-repeat;
+background-color:white;
+background-position: left 10px;
+font-size: 0.8em;
+}
+
+.graph {
+margin: 10px 0 5px 0;
+}
+
+.ON {
+color:green;
+}
+
+.OFF {
+color:darkred;
+}
