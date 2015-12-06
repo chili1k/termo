@@ -61,6 +61,8 @@ function validateInput() {
 	}
 }
 
+// Format time as yymmddhhmm
+// GetMonth returns 0-11
 function formatDate(d) {
 	return d.getFullYear().toString()+
 				pad((d.getMonth()+1).toString(),2)+pad(d.getDate().toString(),2)+
@@ -73,16 +75,8 @@ $(function() {
 		if (validateInput()) {
 			var startDate = getStartDateFull();
 			var endDate = getEndDateFull();
-			console.log(formatDate(startDate));
-			console.log(formatDate(endDate));
-			return;
-			// Format time as yymmddhhmm
-			// GetMonth returns 0-11
-			
-			var end = endDate.getFullYear().toString()+
-				pad((endDate.getMonth()+1).toString(),2)+pad(endDate.getDate().toString(),2)+endTime.replace(":","");
-			console.log(start);
-			console.log(end);
+			var start = formatDate(startDate);
+			var end = formatDate(endDate);
 			var sensorid = parseInt($("#sensorid").val());
 			var graphLink = "/graph?sensorid="+sensorid+"&start="+start+"&end="+end
 			$("#graph").fadeOut(100).html($("img").attr("src",graphLink)).fadeIn("slow");
