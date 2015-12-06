@@ -55,7 +55,7 @@ os.chdir(scriptPath)
 
 conn = sqlite3.connect('termo.db')
 conf = termoconf(conn)
-daenet = daenetip(conf.boardhostname)
+daenet = daenetip(conf.boardhostname,conf.appmode)
 
 try:
 	for sensor in conn.execute('SELECT sensorid,name,threshold,relayid,automatic FROM sensors WHERE enabled = 1'): 
