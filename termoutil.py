@@ -35,9 +35,10 @@ def get_graphimage(sensorid,starttime,endtime):
 
 
 class termoconf():
-	rocommunity = None;
-	rwcommunity = None;
-	boardhostname = None;
+	appmode = None
+	rocommunity = None
+	rwcommunity = None
+	boardhostname = None
 	arsourl = None
 	arsocity = None
 
@@ -47,6 +48,7 @@ class termoconf():
 
 	def __init__(self, conn):
 		c = conn.cursor()
+		self.appmode = self.__get_setting(c,'appmode').encode('utf-8')
 		self.rocommunity = self.__get_setting(c,'rocommunity').encode('utf-8')
 		self.rwcommunity = self.__get_setting(c,'rwcommunity').encode('utf-8')
 		self.boardhostname = self.__get_setting(c,'boardhostname').encode('utf-8')

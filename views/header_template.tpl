@@ -1,24 +1,26 @@
 <!DOCTYPE HTML>
-<html>
+<html lang="sl">
 <head>
-<link rel="stylesheet" type="text/css" href="/static/css/termo_style.css">
-<script src="/static/js/jquery-1.9.0.min.js"></script>
-<script src="/static/js/jquery-ui/jquery-ui-1.10.0.custom.min.js"></script>
-<script src="/static/js/jquery-ui/jquery.ui.datepicker-sl.js"></script>
-<link rel="stylesheet" href="/static/js/jquery-ui/themes/base/jquery-ui.css">
+        <meta charset="utf-8"> 
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>Termo</title>
+        <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+        <link rel="stylesheet" href="/static/css/bootstrap-datepicker3.min.css">
+        <link rel="stylesheet" href="/static/css/bootstrap-timepicker.min.css">
+        <link rel="stylesheet" href="/static/css/termo.css">
 </head>
 <body>
-	<div id="sideBar">
-	<select>
-        %for row in sensors:
-		<option value="{{row['sensorid']}}">{{row['name']}}</a>
-        %end
-	</select>
+        <nav class="navbar navbar-inverse">
+                <div class="navbar-header">
+                        <a class="navbar-brand" href="#"><span class="glyphicon glyphicon-cloud"></span>&nbsp;&nbsp;Termo</a>
+                </div>
+                <div>
+                        <ul class="nav navbar-nav">
+                                <li class="{{'active' if activepage == 'overview' else ''}}"><a href="/sensor/0">Pregled</a></li>
+                                <li class="{{'active' if activepage == 'setup' else ''}}"><a href="/sensor/edit/0">Nastavitve</a></li>
+                        </ul>
+                </div>
+        </nav>
 
-        <ul class="nav">
-                <li><a href="/sensor/{{row['sensorid']}}">Nadzorna plošča</a></li>
-                <li><a href="/sensor/edit/{{row['sensorid']}}">Nastavitve</a></li>
-        </ul>
-	</div>
-
-<div id="mainContent">

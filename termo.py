@@ -6,31 +6,25 @@ from time import mktime
 from datetime import datetime,timedelta
 
 def get_sensors(conn):
-        c = conn.cursor()
-        c.execute('SELECT sensorid,name FROM sensors')
-        return c.fetchall()
+	c = conn.cursor()
+	c.execute('SELECT sensorid,name FROM sensors')
+	return c.fetchall()
 
 def get_sensor(sensorid,conn):
 	c = conn.cursor()
 	if sensorid is not None:
-                c.execute('SELECT s.sensorid,s.name,s.comment,s.threshold,s.temperature,s.automatic,'+
+		c.execute('SELECT s.sensorid,s.name,s.comment,s.threshold,s.temperature,s.automatic,'+
 			's.enabled,s.updatetime,s.relayid,r.state relaystate FROM sensors s '+
 			'LEFT JOIN relays r on s.relayid = r.relayid '
 			'WHERE sensorid=?', [sensorid])
-                sensordata = c.fetchone()
-        else:
-                # Select first enabled sensor if no id is gived
-                c.execute('SELECT s.sensorid,s.name,s.comment,s.threshold,s.temperature,s.automatic,'+
-                        's.enabled,s.updatetime,s.relayid,r.state relaystate FROM sensors s '+
-                        'LEFT JOIN relays r on s.relayid = r.relayid LIMIT 1')
-                sensordata = c.fetchone()
+		sensordata = c.fetchone()
+	else:
+		# Select first enabled sensor if no id is gived
+		c.execute('SELECT s.sensorid,s.name,s.comment,s.threshold,s.temperature,s.automatic,'+
+						's.enabled,s.updatetime,s.relayid,r.state relaystate FROM sensors s '+
+						'LEFT JOIN relays r on s.relayid = r.relayid LIMIT 1')
+		sensordata = c.fetchone()
 	return sensordata
-
-def get_relaystate(sensorid,conn):
-	c = conn.cursor()
-	c.execute('SELECT r.oid FROM sensors s LEFT JOIN relays r ON r.relayid = s.relayid')
-	oid = c.fetchone()[0]
-
 
 @route('/')
 @route('/sensor/<sensorid:int>')
@@ -43,16 +37,20 @@ def sensor(sensorid = None):
 	#sensorgraph = '/static/img/sensor'+str(sensordata['sensorid'])+'.png'
 	conf = termoconf(conn)
 	outsidetemp = getoutsidetemp(conf.arsourl,conf.arsocity)
-        daenet = daenetip(conf.boardhostname)
-        relaystate = daenet.getrelay(sensordata['relayid'])	
+	daenet = daenetip(conf.boardhostname, conf.appmode)
+	# When developing read relay state from DB
+	if conf.appmode == "dev":
+		relaystate = sensordata['relaystate'];
+	else:
+		relaystate = daenet.getrelay(sensordata['relayid'])	
 	endtime = datetime.now()
 	starttime = (datetime.now() - timedelta(hours=12))
 	sensorgraph = '/graph?sensorid={0}&start={1}&end={2}'.format(sensordata[0],
-		starttime.strftime('%Y%m%d%H%M'),endtime.strftime('%Y%m%d%H%M'))
+	starttime.strftime('%Y%m%d%H%M'),endtime.strftime('%Y%m%d%H%M'))
 
 	conn.close()
 	return template('sensor_template',sensor=sensordata,sensorgraph=sensorgraph,sensors=sensors,
-		outsidetemp=outsidetemp,relaystate=relaystate,starttime=starttime,endtime=endtime)
+		outsidetemp=outsidetemp,relaystate=relaystate,starttime=starttime,endtime=endtime,activepage='overview')
 
 @route('/sensor/edit/<sensorid:int>')
 def edit_sensor(sensorid = None):
@@ -63,11 +61,11 @@ def edit_sensor(sensorid = None):
 	sensors = get_sensors(conn)
 
 	conn.close()
-	return template('sensor_edit_template',sensor=sensordata,sensors=sensors)
+	return template('sensor_edit_template',sensor=sensordata,sensors=sensors,activepage='setup')
 
 @route('/relay/toggle/<relayid:int>', method='get')
 def toggle_sensor(relayid = None):
-        conn = sqlite3.connect('termo.db')
+	conn = sqlite3.connect('termo.db')
 	relaystate = conn.execute('SELECT state FROM relays WHERE relayid = ?', [relayid]).fetchone()[0]
 	if relaystate:
 		newstate = 0
@@ -75,13 +73,13 @@ def toggle_sensor(relayid = None):
 		newstate = 1
 
 	conf = termoconf(conn)
-	daenet = daenetip(conf.boardhostname)	
+	daenet = daenetip(conf.boardhostname, conf.appmode)	
 	daenet.setrelay(relayid,newstate)
 	conn.execute('UPDATE relays SET state = ?',[newstate])
 	conn.commit()
-        conn.close()
+	conn.close()
 	sensorid = request.GET.get('sensorid','')
-        return sensor(sensorid)
+	return sensor(sensorid)
 
 @route('/sensor/save/<sensorid:int>', method='POST')
 def save_sensor(sensorid):
@@ -92,7 +90,7 @@ def save_sensor(sensorid):
 	enabled = int(request.POST.get('enabled','0'))
 
 	conn = sqlite3.connect('termo.db')
-        conn.execute('UPDATE sensors SET enabled=?,name=?,comment=?,threshold=?,automatic=? WHERE sensorid=?',
+	conn.execute('UPDATE sensors SET enabled=?,name=?,comment=?,threshold=?,automatic=? WHERE sensorid=?',
 		[enabled,name,comment,threshold,automatic,sensorid])
 	conn.commit()
 	conn.close()
@@ -114,4 +112,4 @@ def server_static(filepath):
 	return static_file(filepath, root='static')
 
 debug(True)
-run(host='192.168.20.9', port=8080, reloader=True)
+run(host='localhost', port=8080, reloader=True)

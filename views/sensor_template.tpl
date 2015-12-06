@@ -1,65 +1,65 @@
 %include header_template sensors=sensors
 %import datetime
 
-<div id="sensorData">
-	<fieldset>
-	<table>
-		<tr><td>Notranja temperatura:</td><td><strong>{{round(sensor['temperature'],1)}} <sup>o</sup>C</strong></td></tr>
-		<tr><td>Zunanja temperatura:</td><td><strong>{{outsidetemp}} <sup>o</sup>C</strong></td></tr>
-		<tr><td>Stanje gretja:</td><td class='{{'ON' if relaystate else 'OFF'}}'><strong>{{'Vklopljeno' if relaystate else 'Izklopljeno'}}</strong></td></tr>
-	</table>
-	</fieldset>
-
-	<form action="/relay/toggle/{{sensor['relayid']}}" method="get">
-		<input type="hidden" id="sensorid" name="sensorid" value="{{sensor['sensorid']}}">
-		<input class="button" type="submit" id="sensorAction" name="sensorAction" value="{{'Izklopi gretje' if sensor['relaystate'] else 'Vklopi gretje'}}">
-	</form>
-
-	<div id="sensorGraph">
-		<p class="graphTitle">Graf notranje temperature:</p>
-		<fieldset id="graphPeriod" class=>
-			<label for="startDate">Od:</label>
-			<input type="text" id="startDate" name="startDate" class="dateInput datePicker" 
-				value="{{starttime.strftime('%d.%m.%Y')}}">
-			<input type="text" id="startTime" name="startTime" class="timeInput" 
-				value="{{starttime.strftime('%H:%M')}}">
-			<label for="endDate">Do:</label>
-                        <input type="text" id="endDate" name="endDate" class="dateInput datePicker"
-				value="{{endtime.strftime('%d.%m.%Y')}}">
-                        <input type="text" id="endTime" name="endTime" class="timeInput"
-				value="{{endtime.strftime('%H:%M')}}">
-		</fieldset>
-
-		<input class="button" type="button" id="showGraph" name="dateAction" value="Prikaži">
-		<p><img class="graph" src="{{!sensorgraph}}"></p>
-		<p class="graphSubtitle">Zadnji datum meritve:&nbsp;{{datetime.datetime.strptime(sensor['updatetime'],'%Y-%m-%d %H:%M:%S').strftime('%H:%M:%S, %d.%m.%Y')}}</p>
+<div id="heatingContainer" class="container text-center">
+	<div class="alert {{'alert-warning' if sensor['relaystate'] else 'alert-info'}}">
+	 	<h4>Stanje gretja: <strong>{{'Vklopljeno' if relaystate else 'Izklopljeno'}}</strong></h4>
+		<div>
+		<form action="/relay/toggle/{{sensor['relayid']}}" method="get">
+			<input type="hidden" id="sensorid" name="sensorid" value="{{sensor['sensorid']}}">
+			<button id="sensorAction" name="sensorAction" type="submit" class="btn btn-warning">
+				<span class="glyphicon glyphicon-off"></span> {{'Izklopi gretje' if sensor['relaystate'] else 'Vklopi gretje'}}
+			</button>
+		</form>
+		</div>
 	</div>
 </div>
 
-<script>
-$(function() {
-$.datepicker.setDefaults( $.datepicker.regional[ "sl" ] );
-$( ".datePicker" ).datepicker();
+<ul id="temperaturePanel" class="nav navbar-nav navbar-right">
+        <li class="text-muted">
+        	Notranja temperatura: <span class="label label-primary">{{round(sensor['temperature'],1)}} <sup>o</sup>C</span>
+        </li>
+		<li class="text-muted">
+			Zunanja temperatura: <span class="label label-info">{{outsidetemp}} <sup>o</sup>C</span>
+		</li>
+</ul>
 
-$("#showGraph").click(function(){
-	var startDate = $("#startDate").datepicker("getDate");
-	var endDate = $("#endDate").datepicker("getDate");
-	var startTime = $("#startTime").val();
-	var endTime = $("#endTime").val();
-	var start = $.datepicker.formatDate('yymmdd',startDate)+startTime.replace(":","");
-	var end = $.datepicker.formatDate('yymmdd',endDate)+endTime.replace(":","");
-	var sensorid = {{sensor['sensorid']}};
-	var graphLink = "/graph?sensorid="+sensorid+"&start="+start+"&end="+end
-	$(".graph").fadeOut(100).html($("img").attr("src",graphLink)).fadeIn("slow");
-	/*$.get(
-	    "/graph?sensorid="+sensorid+"&start="+start+"&end="+end,
-	    "",
-	    function(data) { ; },
-	    "html"
-	);*/
-});
+<div id="historyContainer" class="container">
+<hr>
+	<div id="historyPanel" class="panel panel-default">
+		<div class="panel-heading">Zgodovina meritev</div>
+		<div class="panel-body">
+			<form class="form-inline dateForm" role="form">
+				 <div class="form-group">
+				 	<label for="startDate">Začetek:</label>
+					<input type="text" id="startDate" name="startDate" class="form-control termoDate" value="{{starttime.strftime('%d.%m.%Y')}}">
+				</div>
+				 <div class="form-group">
+					<input type="text" id="startTime" class="form-control termoTime" value="{{starttime.strftime('%H:%M')}}">
+				</div>
+				<div class="form-group">
+				 	<label for="endDate">Konec:</label>
+					<input type="text" id="endDate" name="endDate" class="form-control termoDate" value="{{endtime.strftime('%d.%m.%Y')}}">
+				</div>
+				 <div class="form-group">
+					<input type="text" id="endTime" class="form-control termoTime" value="{{endtime.strftime('%H:%M')}}">
+				</div>
+			</form>
 
-});
-</script>
+			<button id="showGraphButton" type="button" class="btn btn-primary">Prikaži</button>
+		</div>	
+	</div>	
+	<div id="rangeValidator" class="alert alert-warning">
+		<strong>Napaka!</strong> Začetni datum mora biti manjši od končega datuma!
+	</div>
+
+	<br>
+	<div id="lastReadingBlock">
+		<div>
+			<img id="graph" src="{{!sensorgraph}}">
+			<p style="text-align:right"><span class="label label-default">Datum zadnje meritve: {{datetime.datetime.strptime(sensor['updatetime'],'%Y-%m-%d %H:%M:%S').strftime('%H:%M:%S, %d.%m.%Y')}}</span></p>
+		</div>
+	</div>
+</div> <!-- /container -->
 
 %include footer_template

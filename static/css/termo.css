@@ -1,0 +1,64 @@
+#temperaturePanel {
+	position: absolute;
+	margin-right: 20px;
+	top: 13px;
+	right: 0;
+	/*margin: 0 auto;
+	text-align: center;*/
+}
+
+#temperaturePanel li {
+	padding-right: 10px;
+	/*font-size: 1.2em;*/
+}
+
+#historyPanel {
+	width: 500px;
+	margin: 0 auto;
+}
+
+#historyContainer #rangeValidator {
+	margin: auto;
+	width:500px;
+	display: none;
+}
+
+#heatingContainer {
+	width: 70%;
+}
+
+.termoDate {
+	width: 120px!important;
+	margin-left: 10px;
+}
+
+.termoTime {
+	width: 80px!important;
+	margin-left: 2px;
+}
+
+.dateForm label {
+	width:60px;
+}
+
+#showGraphButton {
+	margin-top: 10px;
+}
+
+#lastReadingBlock {
+	text-align:center;
+}
+
+#lastReadingBlock div {
+	display: inline-block;
+}
+
+#lastReadingBlock #graph {
+	display: block;
+	width: 597px;
+	height: 255px
+}
+
+#sensorInput {
+	width: 500px;
+}
