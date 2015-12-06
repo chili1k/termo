@@ -1,4 +1,4 @@
-%include header_template sensors=sensors
+%include header_template sensors=sensors,activepage=activepage
 %import datetime
 
 <div id="heatingContainer" class="container text-center">
