@@ -51,12 +51,12 @@ class daenetip(object):
 		else:
 			if self.getrelay(relayid) == state:
 				logging.debug('Relay state already set to {0}. Skipping.'.format(state))
-
+			else:
 				oid = self.__relayoid.format(relayid)
 				ret = commands.getstatusoutput('snmpset -v1 -c {3} {0} {1} i {2}'.
 						format(self.ip, oid, state, self.rwcommunity))
 
 				if ret[0] != 0:
 					err = 'Error writing relay data: '+ret[1]+'. Error code '+str(ret[0])
-							#logging.error(err)
-				raise Exception(err)
+					#logging.error(err)
+					raise Exception(err)

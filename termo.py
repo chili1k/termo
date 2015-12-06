@@ -40,9 +40,9 @@ def sensor(sensorid = None):
 	daenet = daenetip(conf.boardhostname, conf.appmode)
 	# When developing read relay state from DB
 	if conf.appmode == "dev":
-		relaystate = sensordata['relaystate'];
+		relaystate = sensordata['relaystate']
 	else:
-		relaystate = daenet.getrelay(sensordata['relayid'])	
+		relaystate = daenet.getrelay(sensordata['relayid'])
 	endtime = datetime.now()
 	starttime = (datetime.now() - timedelta(hours=12))
 	sensorgraph = '/graph?sensorid={0}&start={1}&end={2}'.format(sensordata[0],
@@ -74,7 +74,8 @@ def toggle_sensor(relayid = None):
 
 	conf = termoconf(conn)
 	daenet = daenetip(conf.boardhostname, conf.appmode)	
-	daenet.setrelay(relayid,newstate)
+	if conf.appmode != 'dev':
+		daenet.setrelay(relayid,newstate)
 	conn.execute('UPDATE relays SET state = ?',[newstate])
 	conn.commit()
 	conn.close()
