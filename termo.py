@@ -5,6 +5,8 @@ from termoutil import *
 from time import mktime
 from datetime import datetime,timedelta
 
+termodb = './config/termo.db'
+
 def get_sensors(conn):
 	c = conn.cursor()
 	c.execute('SELECT sensorid,name FROM sensors')
@@ -29,7 +31,7 @@ def get_sensor(sensorid,conn):
 @route('/')
 @route('/sensor/<sensorid:int>')
 def sensor(sensorid = None):
-	conn = sqlite3.connect('termo.db')
+	conn = sqlite3.connect(termodb)
 	conn.row_factory = sqlite3.Row
 
 	sensordata = get_sensor(sensorid,conn)
@@ -54,7 +56,7 @@ def sensor(sensorid = None):
 
 @route('/sensor/edit/<sensorid:int>')
 def edit_sensor(sensorid = None):
-	conn = sqlite3.connect('termo.db')
+	conn = sqlite3.connect(termodb)
 	conn.row_factory = sqlite3.Row
 
 	sensordata = get_sensor(sensorid,conn)
@@ -65,7 +67,7 @@ def edit_sensor(sensorid = None):
 
 @route('/relay/toggle/<relayid:int>', method='get')
 def toggle_sensor(relayid = None):
-	conn = sqlite3.connect('termo.db')
+	conn = sqlite3.connect(termodb)
 	relaystate = conn.execute('SELECT state FROM relays WHERE relayid = ?', [relayid]).fetchone()[0]
 	if relaystate:
 		newstate = 0
@@ -90,7 +92,7 @@ def save_sensor(sensorid):
 	automatic = int(request.POST.get('automaticmode',''))
 	enabled = int(request.POST.get('enabled','0'))
 
-	conn = sqlite3.connect('termo.db')
+	conn = sqlite3.connect(termodb)
 	conn.execute('UPDATE sensors SET enabled=?,name=?,comment=?,threshold=?,automatic=? WHERE sensorid=?',
 		[enabled,name,comment,threshold,automatic,sensorid])
 	conn.commit()
@@ -113,4 +115,4 @@ def server_static(filepath):
 	return static_file(filepath, root='static')
 
 debug(True)
-run(host='localhost', port=8080, reloader=True)
+run(host='0.0.0.0', port=8080, reloader=True)

@@ -53,7 +53,7 @@ logging.basicConfig(format=FORMAT,level=logging.DEBUG)
 scriptPath = os.path.dirname(os.path.realpath(__file__)) 
 os.chdir(scriptPath)
 
-conn = sqlite3.connect('termo.db')
+conn = sqlite3.connect('./config/termo.db')
 conf = termoconf(conn)
 daenet = daenetip(conf.boardhostname,conf.appmode)
 
